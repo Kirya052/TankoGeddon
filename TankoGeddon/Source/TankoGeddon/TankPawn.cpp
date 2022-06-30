@@ -82,7 +82,7 @@ void ATankPawn::Tick(float DeltaSeconds)
 	CurrentRotateAxisValue = FMath::Lerp(CurrentRotateAxisValue, RotateRightAxisValue, InterpolationKey);
 	float YawRotation = RotationSpeed * CurrentRotateAxisValue * DeltaSeconds;
 
-	UE_LOG(LogTemp, Warning, TEXT("CurrentRotateAxis Value: %f, RotateRightAxisValue: %f"), CurrentRotateAxisValue, RotateRightAxisValue);
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentRotateAxis Value: %f, RotateRightAxisValue: %f"), CurrentRotateAxisValue, RotateRightAxisValue);
 
 	FRotator CurrentRotation = GetActorRotation();
 
@@ -108,16 +108,16 @@ void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 0.0f));
+	//SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 0.0f));
 
 	TankController = Cast<ATankController>(GetController());
 
-	SetupCannon();
+	SetupCannon(CannonClass);
 }
 
-void ATankPawn::SetupCannon()
+void ATankPawn::SetupCannon(TSubclassOf<ACannon> newCannonClass)
 {
-	if (!CannonClass)
+	if (!newCannonClass)
 	{
 		return;
 	}
@@ -129,7 +129,7 @@ void ATankPawn::SetupCannon()
 	params.Instigator = this;
 	params.Owner = this;
 
-	Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, params);
+	Cannon = GetWorld()->SpawnActor<ACannon>(newCannonClass, params);
 
 	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);
 }

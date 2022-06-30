@@ -27,6 +27,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	void SetupCannon(TSubclassOf<ACannon> newCannonClass);
+
 protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* BodyMesh;
@@ -63,8 +65,6 @@ protected:
 
 	UPROPERTY()
 	class ATankController* TankController;
-
-	void SetupCannon();
 
 private:
 	float TargetForwardAxisValue = 0.0f;

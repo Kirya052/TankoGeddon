@@ -42,8 +42,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	float BurstInterval = 0.1f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	float FireRange = 100.0f;
+
 	FTimerHandle ReloadTimer;
 	FTimerHandle BurstTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	TSubclassOf<class AProjectile> ProjectileClass;
 
 private:
 	bool bCanFire = true;

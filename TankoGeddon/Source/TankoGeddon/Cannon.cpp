@@ -5,6 +5,8 @@
 #include "Components\StaticMeshComponent.h"
 #include "Components\ArrowComponent.h"
 #include "Components\SceneComponent.h"
+#include "Projectile.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ACannon::ACannon()
@@ -34,10 +36,39 @@ void ACannon::Fire()
 	if (CannonType == ECannonType::FireProjectile)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Fire projectile")));
+		
+		AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+		if (projectile)
+		{
+			projectile->Start();
+		}
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Fire trace")));
+		
+		FHitResult hitResult;
+		FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
+		traceParams.bTraceComplex = true;
+		traceParams.bReturnPhysicalMaterial = false;
+
+		FVector StartTrace = ProjectileSpawnPoint->GetComponentLocation();
+		FVector EndTrace = StartTrace + ProjectileSpawnPoint->GetForwardVector() * FireRange;
+
+		if (GetWorld()->LineTraceSingleByChannel(hitResult, StartTrace, EndTrace, ECollisionChannel::ECC_Visibility, traceParams))
+		{
+			DrawDebugLine(GetWorld(), StartTrace, hitResult.Location, FColor::Red, false, 0.5f, 0, 10);
+			if (hitResult.GetActor())
+			{
+				hitResult.GetActor()->Destroy();
+			}
+		} 
+		else
+		{
+			DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor::Purple, false, 0.5f, 0, 10);
+		}
+
+
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Shells is: %d"), Shells));
