@@ -8,6 +8,7 @@
 #include "TankController.h"
 #include "Kismet\KismetMathLibrary.h"
 #include "Cannon.h"
+#include "Components\ArrowComponent.h"
 
 
 ATankPawn::ATankPawn()
@@ -30,6 +31,9 @@ ATankPawn::ATankPawn()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	CannonSetupPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("CannonSetupPoint"));
+	CannonSetupPoint->SetupAttachment(TurretMesh);
 }
 
 void ATankPawn::MoveForward(float Value)
@@ -52,6 +56,14 @@ void ATankPawn::Fire()
 	if (Cannon)
 	{
 		Cannon->Fire();
+	}
+}
+
+void ATankPawn::FireSpecial()
+{
+	if (Cannon)
+	{
+		Cannon->FireSpecial();
 	}
 }
 
@@ -119,6 +131,6 @@ void ATankPawn::SetupCannon()
 
 	Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, params);
 
-	Cannon->AttachToComponent(TurretMesh, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);
 }
 

@@ -21,6 +21,7 @@ public:
 	void RotateRight(float Value);
 
 	void Fire();
+	void FireSpecial();
 
 	virtual void Tick( float DeltaSeconds ) override;
 
@@ -38,6 +39,9 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = " Components")
 	class UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turret | Component")
+	class UArrowComponent* CannonSetupPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Turret | Component")
 	TSubclassOf<ACannon> CannonClass;

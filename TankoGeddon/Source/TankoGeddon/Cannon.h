@@ -16,6 +16,8 @@ public:
 	ACannon();
 
 	void Fire();
+	void FireSpecial();
+
 	void Reload();
 
 protected:
@@ -31,8 +33,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	float ReloadTime = 1.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	int32 Shells = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	int32 BurstSize = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	float BurstInterval = 0.1f;
+
 	FTimerHandle ReloadTimer;
+	FTimerHandle BurstTimer;
 
 private:
 	bool bCanFire = true;
+
+	int32 CurrentBurts = 0;
+
+	void Burst();
 };
