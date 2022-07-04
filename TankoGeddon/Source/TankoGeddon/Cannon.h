@@ -18,6 +18,8 @@ public:
 	void Fire();
 	void FireSpecial();
 
+	bool IsReadyToFire() { return bCanFire; };
+
 	void Reload();
 
 protected:
