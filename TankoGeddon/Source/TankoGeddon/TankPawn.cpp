@@ -16,12 +16,6 @@ ATankPawn::ATankPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));
-	RootComponent = BodyMesh;
-
-	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
-	TurretMesh->SetupAttachment(BodyMesh);
-
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(BodyMesh);
 	SpringArm->bDoCollisionTest = false;
@@ -33,12 +27,6 @@ ATankPawn::ATankPawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
-	CannonSetupPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("CannonSetupPoint"));
-	CannonSetupPoint->SetupAttachment(TurretMesh);
-
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	HealthComponent->OnDie.AddUObject(this, &ATankPawn::Die);
-	HealthComponent->OnHealthChanged.AddUObject(this, &ATankPawn::DamageTaked);
 }
 
 void ATankPawn::MoveForward(float Value)
@@ -56,13 +44,6 @@ void ATankPawn::RotateRight(float Value)
 	RotateRightAxisValue = Value;
 }
 
-void ATankPawn::Fire()
-{
-	if (Cannon)
-	{
-		Cannon->Fire();
-	}
-}
 
 void ATankPawn::FireSpecial()
 {
@@ -70,6 +51,17 @@ void ATankPawn::FireSpecial()
 	{
 		Cannon->FireSpecial();
 	}
+}
+
+void ATankPawn::ChangeWeapon()
+{
+	//Change weapon
+	TSubclassOf<ACannon> cachedCannon = EquippedCannonClass;
+	EquippedCannonClass = SecondCannonClass;
+	SecondCannonClass = cachedCannon;
+
+	//EquipWeapon
+	SetupCannon(EquippedCannonClass);
 }
 
 void ATankPawn::Tick(float DeltaSeconds)
@@ -117,39 +109,4 @@ void ATankPawn::BeginPlay()
 
 	TankController = Cast<ATankController>(GetController());
 
-	SetupCannon(CannonClass);
-}
-
-void ATankPawn::SetupCannon(TSubclassOf<ACannon> newCannonClass)
-{
-	if (!newCannonClass)
-	{
-		return;
-	}
-	if (Cannon)
-	{
-		Cannon->Destroy();
-	}
-	FActorSpawnParameters params;
-	params.Instigator = this;
-	params.Owner = this;
-
-	Cannon = GetWorld()->SpawnActor<ACannon>(newCannonClass, params);
-
-	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);
-}
-
-void ATankPawn::TakeDamage(FDamageData DamageData)
-{
-	HealthComponent->TakeDamage(DamageData);
-}
-
-void ATankPawn::Die()
-{
-	Destroy();
-}
-
-void ATankPawn::DamageTaked(float DamageValue)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Tank %s take Damage: %f,  Health: %f"), *GetName(), DamageValue, HealthComponent->GetHealth());
 }

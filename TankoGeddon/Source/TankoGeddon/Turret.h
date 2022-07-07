@@ -6,57 +6,26 @@
 #include "GameFramework/Actor.h"
 #include "DamageTaker.h"
 #include "GameStruct.h"
+#include "MachinePawn.h"
 #include "Turret.generated.h"
 
 class UStaticMeshComponent;
 class ACannon;
 UCLASS()
-class TANKOGEDDON_API ATurret : public AActor, public IDamageTaker
+class TANKOGEDDON_API ATurret : public AMachinePawn
 {
 	GENERATED_BODY()
 	
 public:	
 	ATurret();
 
-	virtual void TakeDamage(FDamageData DamageData) override;
 protected:
 	virtual void BeginPlay() override;
 
-	void Destoryed();
 	void Targeting();
 	void RotateToPlayer();
 	bool IsPlayerInRange();
 	bool CanFire();
-	void Fire();
-
-	void SetupCannon();
-
-	UFUNCTION()
-	void Die();
-
-	UFUNCTION()
-	void DamageTaked(float DamageValue);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	UStaticMeshComponent* BodyMesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	UStaticMeshComponent* TurretMesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	class UBoxComponent* BoxComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	class UArrowComponent* CannonSetupPoint;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	TSubclassOf<ACannon> CannonClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	class UHealthComponent* HealthComponent;
-
-	UPROPERTY()
-	ACannon* Cannon;
 
 	UPROPERTY()
 	class APawn* PlayerPawn;

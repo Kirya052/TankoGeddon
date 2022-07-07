@@ -24,6 +24,16 @@ AProjectile::AProjectile()
 void AProjectile::Start()
 {
     GetWorld()->GetTimerManager().SetTimer(MoveTimer, this, &AProjectile::Move, MoveRate, true, MoveRate);
+    GetWorld()->GetTimerManager().SetTimer(DeactivateTimer, this, &AProjectile::Deactivate, DeactivateTime, false);
+}
+
+void AProjectile::Deactivate()
+{
+    bIsActivation = false;
+    SetActorLocation(FVector(0.0f, 0.0f, -50.0f));
+    GetWorld()->GetTimerManager().ClearTimer(DeactivateTimer);
+    GetWorld()->GetTimerManager().ClearTimer(MoveTimer);
+    SetActorEnableCollision(false);
 }
 
 void AProjectile::Move()
@@ -37,8 +47,24 @@ void AProjectile::OnMeshOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
     UE_LOG(LogTemp, Warning, TEXT("Projectile collided with %s, collided with component %s"), *OtherActor->GetName(), *OverlappedComp->GetName());
 
     AActor* owner = GetOwner();
-    AActor* ownerByOwner = owner != nullptr ? owner->GetOwner() : nullptr; 
+    if (owner)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Owner is %s"), *owner->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Owner is null"));
+    }
 
+    AActor* ownerByOwner = owner != nullptr ? owner->GetOwner() : nullptr; 
+	if (ownerByOwner)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OwnerByOwner is %s"), *ownerByOwner->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Owner is null"));
+	}
     /*if (owner != nullptr)
     {
         ownerByOwner = owner->GetOwner();
@@ -65,7 +91,7 @@ void AProjectile::OnMeshOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
             OtherActor->Destroy();
         }
 
-        Destroy();
+        Deactivate();
     }
 
 }

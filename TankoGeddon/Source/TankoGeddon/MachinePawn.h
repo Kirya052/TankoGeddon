@@ -4,26 +4,54 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "DamageTaker.h"
+#include "GameStruct.h"
 #include "MachinePawn.generated.h"
 
+class UStaticMeshComponent;
+class ACannon;
 UCLASS()
-class TANKOGEDDON_API AMachinePawn : public APawn
+class TANKOGEDDON_API AMachinePawn : public APawn, public IDamageTaker
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+	
 	AMachinePawn();
 
+	virtual void TakeDamage(FDamageData DamageData) override;
+
+	void Fire();
+
+	void SetupCannon(TSubclassOf<ACannon> newCannonClass);
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UStaticMeshComponent* BodyMesh;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UStaticMeshComponent* TurretMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	class UBoxComponent* BoxComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	class UArrowComponent* CannonSetupPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TSubclassOf<ACannon> EquippedCannonClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	class UHealthComponent* HealthComponent;
+
+	UPROPERTY()
+	ACannon* Cannon;
+
+	UFUNCTION()
+	void Die();
+
+	UFUNCTION()
+	void DamageTaked(float DamageValue);
 };

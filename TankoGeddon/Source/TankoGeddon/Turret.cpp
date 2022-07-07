@@ -16,18 +16,6 @@ ATurret::ATurret()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));
-	RootComponent = BodyMesh;
-
-	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
-	TurretMesh->SetupAttachment(BodyMesh);
-
-	CannonSetupPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("CannonSetupPoint"));
-	CannonSetupPoint->SetupAttachment(TurretMesh);
-
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
-	BoxComponent->SetupAttachment(BodyMesh);
-
 	UStaticMesh* BodyMeshTemp = LoadObject<UStaticMesh>(this, *BodyMeshPath);
 	if(BodyMeshTemp)
 		BodyMesh->SetStaticMesh(BodyMeshTemp);
@@ -36,33 +24,17 @@ ATurret::ATurret()
 	if (TurretMeshTemp)
 		TurretMesh->SetStaticMesh(TurretMeshTemp);
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	HealthComponent->OnDie.AddUObject(this, &ATurret::Die);
-	HealthComponent->OnHealthChanged.AddUObject(this, &ATurret::DamageTaked);
-
 }
 
-void ATurret::TakeDamage(FDamageData DamageData)
-{
-	HealthComponent->TakeDamage(DamageData);
-}
 
 void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SetupCannon();
-
 	PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	FTimerHandle TargetingTimer;
 	GetWorld()->GetTimerManager().SetTimer(TargetingTimer, this, &ATurret::Targeting, TargetingRate, true, TargetingRate);
-}
-
-void ATurret::Destoryed()
-{
-	if(Cannon)
-		Cannon->Destroy();
 }
 
 void ATurret::Targeting()
@@ -72,7 +44,7 @@ void ATurret::Targeting()
 		RotateToPlayer();
 	}
 
-	if (CanFire() && Cannon && Cannon->IsReadyToFire())
+	if (CanFire() && Cannon && Cannon->IsReadyToFire() && IsPlayerInRange())
 	{
 		Fire();
 	}
@@ -102,32 +74,4 @@ bool ATurret::CanFire()
 	return aimAngle <= Accurency;
 }
 
-void ATurret::Fire()
-{
-	if(Cannon)
-		Cannon->Fire();
-}
-
-void ATurret::SetupCannon()
-{
-	if (!CannonClass)
-	{
-		return;
-	}
-
-	FActorSpawnParameters params;
-	params.Owner = this;
-	Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, params);
-	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-}
-
-void ATurret::Die()
-{
-	Destroy();
-}
-
-void ATurret::DamageTaked(float DamageValue)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Turret %s take Damage: %f,  Health: %f"), *GetName(), DamageValue, HealthComponent->GetHealth());
-}
 
