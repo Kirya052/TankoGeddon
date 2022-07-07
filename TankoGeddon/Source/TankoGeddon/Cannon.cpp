@@ -8,6 +8,8 @@
 #include "Projectile.h"
 #include "DrawDebugHelpers.h"
 #include "ProjectilePool.h"
+#include "Particles\ParticleSystemComponent.h"
+#include "Components\AudioComponent.h"
 
 // Sets default values
 ACannon::ACannon()
@@ -22,6 +24,11 @@ ACannon::ACannon()
 
 	ProjectileSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("ProjectileSpawnPoint"));
 	ProjectileSpawnPoint->SetupAttachment(CannonSceneComponent);
+
+	ShootEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ShootEffect"));
+	ShootEffect->SetupAttachment(ProjectileSpawnPoint);
+
+	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioEffect"));
 }
 
 void ACannon::Fire()
@@ -33,6 +40,9 @@ void ACannon::Fire()
 
 	bCanFire = false;
 	Shells--;
+
+	ShootEffect->ActivateSystem();
+	AudioEffect->Play();
 
 	if (CannonType == ECannonType::FireProjectile)
 	{

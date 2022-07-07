@@ -64,6 +64,12 @@ protected:
 	UPROPERTY()
 	AProjectilePool* ProjectilePool;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	class UParticleSystemComponent* ShootEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	class UAudioComponent* AudioEffect;
+
 private:
 	bool bCanFire = true;
 

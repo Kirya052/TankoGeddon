@@ -42,11 +42,11 @@ void ATurret::Targeting()
 	if (IsPlayerInRange())
 	{
 		RotateToPlayer();
-	}
 
-	if (CanFire() && Cannon && Cannon->IsReadyToFire() && IsPlayerInRange())
-	{
-		Fire();
+		if (CanFire() && Cannon && Cannon->IsReadyToFire())
+		{
+			Fire();
+		}
 	}
 }
 

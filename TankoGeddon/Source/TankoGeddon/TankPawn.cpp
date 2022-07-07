@@ -23,9 +23,10 @@ ATankPawn::ATankPawn()
 	SpringArm->bInheritYaw = false;
 	SpringArm->bInheritRoll = false;
 
-
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+
 
 }
 
@@ -90,9 +91,22 @@ void ATankPawn::Tick(float DeltaSeconds)
 	SetActorRotation(newRotation);
 
 	//Turret Rotation
-	FVector MousePos = TankController->GetMousePosition();
+	if (TankController)
+	{
+		FVector MousePos = TankController->GetMousePosition();
+		RotateTurretTo(MousePos);
+	}
 	
-	FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), MousePos);
+}
+
+FVector ATankPawn::GetTurretForwardVector()
+{
+	return TurretMesh->GetForwardVector();
+}
+
+void ATankPawn::RotateTurretTo(FVector TargetPosition)
+{
+	FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
 	FRotator TurretRotation = TurretMesh->GetComponentRotation();
 
 	targetRotation.Pitch = TurretRotation.Pitch;
@@ -101,11 +115,16 @@ void ATankPawn::Tick(float DeltaSeconds)
 	TurretMesh->SetWorldRotation(FMath::Lerp(TurretRotation, targetRotation, RotateInterpolationKey));
 }
 
+FVector ATankPawn::GetEyesPosition()
+{
+	return CannonSetupPoint->GetComponentLocation();
+}
+
 void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 0.0f));
+	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, 30.0f));
 
 	TankController = Cast<ATankController>(GetController());
 
