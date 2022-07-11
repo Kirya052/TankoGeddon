@@ -10,6 +10,7 @@
 #include "Cannon.h"
 #include "Components\ArrowComponent.h"
 #include "HealthComponent.h"
+#include "Engine\TargetPoint.h"
 
 
 ATankPawn::ATankPawn()
@@ -97,6 +98,21 @@ void ATankPawn::Tick(float DeltaSeconds)
 		RotateTurretTo(MousePos);
 	}
 	
+}
+
+TArray<FVector> ATankPawn::GetPatrollingPoints()
+{
+	TArray<FVector> points;
+	for (ATargetPoint* point : PatrollingPoints)
+	{
+		points.Add(point->GetActorLocation());
+	}
+	return points;
+}
+
+void ATankPawn::SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints)
+{
+	PatrollingPoints = NewPatrollingPoints;
 }
 
 FVector ATankPawn::GetTurretForwardVector()

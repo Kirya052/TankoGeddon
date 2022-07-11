@@ -26,7 +26,6 @@ ATurret::ATurret()
 
 }
 
-
 void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
