@@ -80,6 +80,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class UAudioComponent* AudioEffect;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Effects")
+	TSubclassOf<class UCameraShakeBase> CameraShakeEffect;
+
 private:
 	bool bCanFire = true;
 

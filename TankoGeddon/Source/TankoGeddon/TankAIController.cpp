@@ -35,7 +35,9 @@ float ATankAIController::GetRotationValue()
 {
 	FVector currentPoint = PattrollingPath[CurrentPattrolingIndex];
 	FVector pawnLocation = TankPawn->GetActorLocation();
-	if (FVector::Distance(currentPoint, pawnLocation) <= MovementAccurency)
+	float Dist = FVector::Distance(currentPoint, pawnLocation);
+	//UE_LOG(LogTemp, Warning, TEXT("Dist is %f"), Dist);
+	if (Dist <= MovementAccurency)
 	{
 		CurrentPattrolingIndex++;
 		if (CurrentPattrolingIndex >= PattrollingPath.Num())
@@ -140,7 +142,7 @@ void ATankAIController::Initialize()
 	TArray<FVector> points = TankPawn->GetPatrollingPoints();
 	for (FVector point : points)
 	{
-		PattrollingPath.Add(point + pawnLocation);
+		PattrollingPath.Add(point);
 	}
 	CurrentPattrolingIndex = 0;
 }

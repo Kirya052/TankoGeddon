@@ -16,7 +16,7 @@ class TANKOGEDDON_API AProjectile : public AActor
 public:	
 	AProjectile();
 
-	void Start();
+	virtual void Start();
 
 	void Deactivate();
 
@@ -40,10 +40,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	float DeactivateTime = 5.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	float PushForce = 1000.0f;
+
 	FTimerHandle MoveTimer;
 	FTimerHandle DeactivateTimer;
 
-	void Move();
+	virtual void Move();
 
 	UFUNCTION()
 	void OnMeshOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, 

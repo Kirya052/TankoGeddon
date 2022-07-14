@@ -16,13 +16,13 @@ ATurret::ATurret()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	UStaticMesh* BodyMeshTemp = LoadObject<UStaticMesh>(this, *BodyMeshPath);
+	/*UStaticMesh* BodyMeshTemp = LoadObject<UStaticMesh>(this, *BodyMeshPath);
 	if(BodyMeshTemp)
 		BodyMesh->SetStaticMesh(BodyMeshTemp);
 
 	UStaticMesh* TurretMeshTemp = LoadObject<UStaticMesh>(this, *TurretMeshPath);
 	if (TurretMeshTemp)
-		TurretMesh->SetStaticMesh(TurretMeshTemp);
+		TurretMesh->SetStaticMesh(TurretMeshTemp); */
 
 }
 
@@ -34,6 +34,19 @@ void ATurret::BeginPlay()
 
 	FTimerHandle TargetingTimer;
 	GetWorld()->GetTimerManager().SetTimer(TargetingTimer, this, &ATurret::Targeting, TargetingRate, true, TargetingRate);
+}
+
+void ATurret::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	UStaticMesh* BodyMeshTemp = LoadObject<UStaticMesh>(this, *BodyMeshPath);
+	if (BodyMeshTemp)
+		BodyMesh->SetStaticMesh(BodyMeshTemp);
+
+	UStaticMesh* TurretMeshTemp = LoadObject<UStaticMesh>(this, *TurretMeshPath);
+	if (TurretMeshTemp)
+		TurretMesh->SetStaticMesh(TurretMeshTemp);
 }
 
 void ATurret::Targeting()

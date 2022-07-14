@@ -10,6 +10,7 @@
 #include "ProjectilePool.h"
 #include "Particles\ParticleSystemComponent.h"
 #include "Components\AudioComponent.h"
+#include "Camera\CameraShakeBase.h"
 
 // Sets default values
 ACannon::ACannon()
@@ -44,9 +45,19 @@ void ACannon::Fire()
 	ShootEffect->ActivateSystem();
 	AudioEffect->Play();
 
+	if (GetOwner() && GetOwner() ==
+		GetWorld()->GetFirstPlayerController()->GetPawn())
+	{
+		if (CameraShakeEffect)
+		{
+			GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CameraShakeEffect);
+		}
+	}
+
+
 	if (CannonType == ECannonType::FireProjectile)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Fire projectile")));
+		//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Fire projectile")));
 		
 		if (ProjectilePool)
 		{
@@ -65,7 +76,7 @@ void ACannon::Fire()
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Fire trace")));
+		//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Fire trace")));
 		
 		FHitResult hitResult;
 		FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
@@ -91,7 +102,7 @@ void ACannon::Fire()
 
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Shells is: %d"), Shells));
+	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Shells is: %d"), Shells));
 
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &ACannon::Reload, ReloadTime, false);
 }
